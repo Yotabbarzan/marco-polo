@@ -4,11 +4,12 @@ import { useState } from "react"
 // import { signIn } from "next-auth/react" // Temporarily disabled
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plane, Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -47,14 +48,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-              <Plane className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">Marcopolo 360</h1>
+          <div className="flex flex-col items-center justify-center mb-4">
+            <Image
+              src="/marcopolo-360-logo.png"
+              alt="Marcopolo 360 Logo"
+              width={120}
+              height={120}
+              className="mb-2"
+            />
           </div>
           <CardTitle className="text-xl">Welcome back</CardTitle>
           <CardDescription>
@@ -111,7 +115,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-slate-700 hover:bg-slate-800"
               disabled={isLoading}
             >
               {isLoading ? "Signing in..." : "Sign in"}
@@ -120,7 +124,7 @@ export default function LoginPage() {
             <div className="text-center">
               <Link
                 href="/auth/forgot-password"
-                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                className="text-sm text-slate-600 hover:text-slate-800 hover:underline"
               >
                 Forgot Password?
               </Link>
@@ -133,7 +137,7 @@ export default function LoginPage() {
             Don&apos;t have an account?{" "}
             <Link
               href="/auth/register"
-              className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+              className="text-slate-600 hover:text-slate-800 hover:underline font-medium"
             >
               Sign up Now
             </Link>

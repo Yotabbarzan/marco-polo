@@ -2,10 +2,10 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plane } from "lucide-react"
 
 function VerifyEmailContent() {
   const [verificationCode, setVerificationCode] = useState(Array(6).fill(""))
@@ -102,14 +102,17 @@ function VerifyEmailContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-              <Plane className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">Marcopolo 360</h1>
+          <div className="flex flex-col items-center justify-center mb-4">
+            <Image
+              src="/marcopolo-360-logo.png"
+              alt="Marcopolo 360 Logo"
+              width={120}
+              height={120}
+              className="mb-2"
+            />
           </div>
           <CardTitle className="text-xl">Enter The Code Sent to Your Email</CardTitle>
           <CardDescription>
@@ -143,7 +146,7 @@ function VerifyEmailContent() {
 
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-slate-700 hover:bg-slate-800"
               disabled={isLoading}
             >
               {isLoading ? "Verifying..." : "Create"}
@@ -155,7 +158,7 @@ function VerifyEmailContent() {
                 <button
                   type="button"
                   onClick={handleResendCode}
-                  className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                  className="text-slate-600 hover:text-slate-800 hover:underline font-medium"
                 >
                   Resend
                 </button>
@@ -167,7 +170,7 @@ function VerifyEmailContent() {
                 Already have an account?{" "}
                 <a
                   href="/auth/login"
-                  className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                  className="text-slate-600 hover:text-slate-800 hover:underline font-medium"
                 >
                   Login here
                 </a>

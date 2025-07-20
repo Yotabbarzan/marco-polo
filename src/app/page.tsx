@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { ChevronRight, Plane, Package, MapPin, Calendar, DollarSign, Star, MessageCircle } from 'lucide-react';
 
 export default function Home() {
@@ -37,24 +38,28 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-100">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Plane className="w-5 h-5 text-white" />
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900">Marco Polo</h1>
+              <Image
+                src="/marcopolo-360-logo.png"
+                alt="Marcopolo 360 Logo"
+                width={40}
+                height={40}
+                className="rounded-lg"
+              />
+              <h1 className="text-2xl font-bold text-gray-900">Marcopolo 360</h1>
             </div>
             <nav className="flex space-x-6">
-              <a href="#" className="text-gray-600 hover:text-blue-600">How it works</a>
-              <a href="#" className="text-gray-600 hover:text-blue-600">Safety</a>
-              <a href="#" className="text-gray-600 hover:text-blue-600">Sign In</a>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+              <a href="#" className="text-gray-600 hover:text-slate-600">How it works</a>
+              <a href="#" className="text-gray-600 hover:text-slate-600">Safety</a>
+              <a href="/auth/login" className="text-gray-600 hover:text-slate-600">Sign In</a>
+              <a href="/auth/register" className="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800">
                 Get Started
-              </button>
+              </a>
             </nav>
           </div>
         </div>
@@ -77,8 +82,8 @@ export default function Home() {
                 onClick={() => { setActiveTab('sender'); resetDemo(); }}
                 className={`px-6 py-3 rounded-md font-medium transition-all ${
                   activeTab === 'sender' 
-                    ? 'bg-blue-600 text-white shadow-md' 
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-slate-700 text-white shadow-md' 
+                    : 'text-gray-600 hover:text-slate-600'
                 }`}
               >
                 <Package className="w-5 h-5 inline mr-2" />
@@ -88,8 +93,8 @@ export default function Home() {
                 onClick={() => { setActiveTab('carrier'); resetDemo(); }}
                 className={`px-6 py-3 rounded-md font-medium transition-all ${
                   activeTab === 'carrier' 
-                    ? 'bg-blue-600 text-white shadow-md' 
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-slate-700 text-white shadow-md' 
+                    : 'text-gray-600 hover:text-slate-600'
                 }`}
               >
                 <Plane className="w-5 h-5 inline mr-2" />
@@ -111,13 +116,13 @@ export default function Home() {
                 {[1, 2, 3, 4].map((step) => (
                   <div key={step} className="flex items-center">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                      step <= currentStep ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                      step <= currentStep ? 'bg-slate-700 text-white' : 'bg-gray-200 text-gray-600'
                     }`}>
                       {step}
                     </div>
                     {step < 4 && (
                       <div className={`w-16 h-1 mx-2 ${
-                        step < currentStep ? 'bg-blue-600' : 'bg-gray-200'
+                        step < currentStep ? 'bg-slate-700' : 'bg-gray-200'
                       }`} />
                     )}
                   </div>
@@ -149,7 +154,7 @@ export default function Home() {
                           placeholder="New York, NY"
                           value={demoData.from}
                           onChange={(e) => handleInputChange('from', e.target.value)}
-                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -163,7 +168,7 @@ export default function Home() {
                           placeholder="London, UK"
                           value={demoData.to}
                           onChange={(e) => handleInputChange('to', e.target.value)}
-                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -178,7 +183,7 @@ export default function Home() {
                           placeholder="Documents, gifts, etc."
                           value={demoData.item}
                           onChange={(e) => handleInputChange('item', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
                         />
                       </div>
                       
@@ -189,7 +194,7 @@ export default function Home() {
                           placeholder="2.5 kg"
                           value={demoData.weight}
                           onChange={(e) => handleInputChange('weight', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -207,7 +212,7 @@ export default function Home() {
                           placeholder={activeTab === 'sender' ? '$50' : '$25/kg'}
                           value={demoData.price}
                           onChange={(e) => handleInputChange('price', e.target.value)}
-                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -222,7 +227,7 @@ export default function Home() {
                           type="date"
                           value={demoData.date}
                           onChange={(e) => handleInputChange('date', e.target.value)}
-                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -230,7 +235,7 @@ export default function Home() {
 
                   <button
                     onClick={nextStep}
-                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+                    className="w-full bg-slate-700 text-white py-3 px-6 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center"
                   >
                     {activeTab === 'sender' ? 'Find Carriers' : 'Post Trip'}
                     <ChevronRight className="w-5 h-5 ml-2" />
@@ -246,7 +251,7 @@ export default function Home() {
                   
                   <div className="space-y-4">
                     {mockCarriers.map((carrier) => (
-                      <div key={carrier.id} className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 cursor-pointer transition-colors">
+                      <div key={carrier.id} className="border border-gray-200 rounded-lg p-4 hover:border-slate-300 cursor-pointer transition-colors">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
                             <div className="text-3xl">{carrier.avatar}</div>
@@ -267,7 +272,7 @@ export default function Home() {
                             <p className="text-sm text-gray-600">{carrier.date}</p>
                             <button 
                               onClick={nextStep}
-                              className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"
+                              className="mt-2 bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800 text-sm"
                             >
                               Select
                             </button>
@@ -308,7 +313,7 @@ export default function Home() {
 
                   <button
                     onClick={nextStep}
-                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="w-full bg-slate-700 text-white py-3 px-6 rounded-lg hover:bg-slate-800 transition-colors"
                   >
                     Continue to Booking Demo
                   </button>
@@ -343,7 +348,7 @@ export default function Home() {
                     <div className="mt-4 flex space-x-3">
                       <button 
                         onClick={nextStep}
-                        className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+                        className="flex-1 bg-slate-700 text-white py-2 px-4 rounded-lg hover:bg-slate-800"
                       >
                         {activeTab === 'sender' ? 'Confirm & Pay' : 'Accept Request'}
                       </button>
@@ -394,7 +399,7 @@ export default function Home() {
                   
                   <button
                     onClick={resetDemo}
-                    className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+                    className="bg-slate-700 text-white py-3 px-6 rounded-lg hover:bg-slate-800 transition-colors"
                   >
                     Try Again
                   </button>
@@ -412,8 +417,8 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Star className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Star className="w-6 h-6 text-slate-600" />
               </div>
               <h4 className="text-xl font-semibold mb-2">Trusted Community</h4>
               <p className="text-gray-600">Verified users with ratings and reviews ensure safe, reliable deliveries</p>
@@ -428,8 +433,8 @@ export default function Home() {
             </div>
             
             <div className="text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Plane className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Plane className="w-6 h-6 text-teal-600" />
               </div>
               <h4 className="text-xl font-semibold mb-2">Global Network</h4>
               <p className="text-gray-600">Connect with travelers going to 190+ countries worldwide</p>
@@ -442,10 +447,14 @@ export default function Home() {
       <footer className="bg-gray-900 text-white py-8">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Plane className="w-5 h-5 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold">Marco Polo</h1>
+            <Image
+              src="/marcopolo-360-logo.png"
+              alt="Marcopolo 360 Logo"
+              width={32}
+              height={32}
+              className="rounded-lg"
+            />
+            <h1 className="text-2xl font-bold">Marcopolo 360</h1>
           </div>
           <p className="text-gray-400 mb-4">Connecting travelers and senders worldwide</p>
           <div className="flex justify-center space-x-6 text-sm text-gray-400">

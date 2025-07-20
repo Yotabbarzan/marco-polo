@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronRight, Plane, Package, MapPin, Calendar, DollarSign, User, Star, MessageCircle } from 'lucide-react';
+import { ChevronRight, Plane, Package, MapPin, Calendar, DollarSign, Star, MessageCircle } from 'lucide-react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'sender' | 'carrier'>('sender');

@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { ChevronRight, Plane, Package, MapPin, Calendar, DollarSign, Star, MessageCircle } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
+import { ChevronRight, Plane, Package, MapPin, Calendar, DollarSign, Star, MessageCircle, LogOut, User } from 'lucide-react';
 
 export default function Home() {
+  const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState<'sender' | 'carrier'>('sender');
   const [currentStep, setCurrentStep] = useState(1);
   const [demoData, setDemoData] = useState({
@@ -52,13 +54,39 @@ export default function Home() {
                 className="rounded-lg"
               />
             </div>
-            <nav className="flex space-x-6">
+            <nav className="flex items-center space-x-6">
               <a href="#" className="text-gray-600 hover:text-slate-600">How it works</a>
               <a href="#" className="text-gray-600 hover:text-slate-600">Safety</a>
-              <a href="/auth/login" className="text-gray-600 hover:text-slate-600">Sign In</a>
-              <a href="/auth/register" className="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800">
-                Get Started
-              </a>
+              
+              {status === "loading" && (
+                <div className="text-gray-600">Loading...</div>
+              )}
+              
+              {status === "unauthenticated" && (
+                <>
+                  <a href="/auth/login" className="text-gray-600 hover:text-slate-600">Sign In</a>
+                  <a href="/auth/register" className="bg-slate-700 text-white px-4 py-2 rounded-lg hover:bg-slate-800">
+                    Get Started
+                  </a>
+                </>
+              )}
+              
+              {status === "authenticated" && session && (
+                <div className="flex items-center space-x-4">
+                  <a href="/dashboard" className="text-gray-600 hover:text-slate-600">Dashboard</a>
+                  <div className="flex items-center space-x-2 text-gray-600">
+                    <User className="w-4 h-4" />
+                    <span>Welcome, {session.user?.name || session.user?.email}</span>
+                  </div>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="flex items-center space-x-1 text-gray-600 hover:text-slate-600"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
             </nav>
           </div>
         </div>

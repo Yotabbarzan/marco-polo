@@ -60,7 +60,8 @@ export default function RegisterPage() {
       })
 
       if (response.ok) {
-        router.push("/auth/verify-email?email=" + encodeURIComponent(formData.email))
+        // Skip verification, go directly to login with success message
+        router.push("/auth/login?message=Account created successfully! Please log in.")
       } else {
         const data = await response.json()
         setError(data.message || "Failed to create account")

@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
-// import { signIn } from "next-auth/react" // Temporarily disabled
-import { useRouter } from "next/navigation"
+import { useState, useEffect, Suspense } from "react"
+import { signIn } from "next-auth/react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -11,13 +11,22 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Eye, EyeOff } from "lucide-react"
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const message = searchParams.get("message")
+    if (message) {
+      setSuccessMessage(message)
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,21 +34,17 @@ export default function LoginPage() {
     setError("")
 
     try {
-      // Temporarily disabled NextAuth login
-      // const result = await signIn("credentials", {
-      //   email,
-      //   password,
-      //   redirect: false,
-      // })
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      })
 
-      // if (result?.error) {
-      //   setError("Invalid email or password")
-      // } else {
-      //   router.push("/")
-      // }
-      
-      // Temporary placeholder - just redirect for now
-      router.push("/")
+      if (result?.error) {
+        setError("Invalid email or password")
+      } else {
+        router.push("/")
+      }
     } catch {
       setError("An error occurred. Please try again.")
     } finally {
@@ -68,6 +73,11 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            {successMessage && (
+              <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
+                {successMessage}
+              </div>
+            )}
             {error && (
               <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
                 {error}
@@ -145,5 +155,13 @@ export default function LoginPage() {
         </CardFooter>
       </Card>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }

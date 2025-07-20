@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@auth/prisma-adapter"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
@@ -10,33 +10,47 @@ const loginSchema = z.object({
   password: z.string().min(1),
 })
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export default NextAuth({
   adapter: PrismaAdapter(prisma),
-  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
-    Credentials({
+    CredentialsProvider({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const validatedFields = loginSchema.safeParse(credentials)
+        try {
+          console.log("Auth attempt for:", credentials?.email)
+          
+          const validatedFields = loginSchema.safeParse(credentials)
 
-        if (validatedFields.success) {
+          if (!validatedFields.success) {
+            console.log("Validation failed:", validatedFields.error)
+            return null
+          }
+
           const { email, password } = validatedFields.data
 
           const user = await prisma.user.findUnique({
             where: { email }
           })
 
+          console.log("User found:", user ? "yes" : "no")
+          console.log("Email verified:", user?.emailVerified ? "yes" : "no")
+          console.log("Has password:", user?.password ? "yes" : "no")
+
           if (!user || !user.emailVerified || !user.password) {
+            console.log("Auth failed: missing user, verification, or password")
             return null
           }
 
           // Compare password with hashed password
           const passwordsMatch = await bcrypt.compare(password, user.password)
+          console.log("Password match:", passwordsMatch)
           
           if (passwordsMatch) {
+            console.log("Auth successful for:", email)
             return {
               id: user.id,
               email: user.email,
@@ -44,9 +58,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               image: user.image,
             }
           }
-        }
 
-        return null
+          console.log("Auth failed: password mismatch")
+          return null
+        } catch (error) {
+          console.error("Auth error:", error)
+          return null
+        }
       },
     }),
   ],
@@ -64,8 +82,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string
+      if (token && session.user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (session.user as any).id = token.id as string
       }
       return session
     },

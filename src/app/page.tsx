@@ -43,15 +43,14 @@ export default function Home() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-2">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center">
               <Image
                 src="/marcopolo-360-logo.png"
                 alt="Marcopolo 360 Logo"
-                width={140}
-                height={140}
+                width={112}
+                height={112}
                 className="rounded-lg"
               />
-              <h1 className="text-sm font-medium text-gray-700">Marcopolo 360</h1>
             </div>
             <nav className="flex space-x-6">
               <a href="#" className="text-gray-600 hover:text-slate-600">How it works</a>
@@ -446,15 +445,14 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-8">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
+          <div className="flex items-center justify-center mb-4">
             <Image
               src="/marcopolo-360-logo.png"
               alt="Marcopolo 360 Logo"
-              width={64}
-              height={64}
+              width={48}
+              height={48}
               className="rounded-lg"
             />
-            <h1 className="text-base font-medium">Marcopolo 360</h1>
           </div>
           <p className="text-gray-400 mb-4">Connecting travelers and senders worldwide</p>
           <div className="flex justify-center space-x-6 text-sm text-gray-400">

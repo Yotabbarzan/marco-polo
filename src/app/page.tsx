@@ -42,13 +42,13 @@ export default function Home() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex justify-between items-center py-2">
             <div className="flex items-center space-x-2">
               <Image
                 src="/marcopolo-360-logo.png"
                 alt="Marcopolo 360 Logo"
-                width={80}
-                height={80}
+                width={140}
+                height={140}
                 className="rounded-lg"
               />
               <h1 className="text-sm font-medium text-gray-700">Marcopolo 360</h1>

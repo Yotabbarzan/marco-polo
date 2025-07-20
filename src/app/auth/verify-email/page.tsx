@@ -109,9 +109,9 @@ function VerifyEmailContent() {
             <Image
               src="/marcopolo-360-logo.png"
               alt="Marcopolo 360 Logo"
-              width={140}
-              height={140}
-              className="mb-2"
+              width={160}
+              height={160}
+              className="mb-3"
             />
           </div>
           <CardTitle className="text-xl">Enter The Code Sent to Your Email</CardTitle>

@@ -1,14 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plane } from "lucide-react"
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const [verificationCode, setVerificationCode] = useState(Array(6).fill(""))
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -74,7 +73,7 @@ export default function VerifyEmailPage() {
         const data = await response.json()
         setError(data.message || "Invalid verification code")
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
@@ -97,7 +96,7 @@ export default function VerifyEmailPage() {
       } else {
         setError("Failed to resend code")
       }
-    } catch (error) {
+    } catch {
       setError("Failed to resend code")
     }
   }
@@ -152,7 +151,7 @@ export default function VerifyEmailPage() {
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Didn't receive the code?{" "}
+                Didn&apos;t receive the code?{" "}
                 <button
                   type="button"
                   onClick={handleResendCode}
@@ -178,5 +177,13 @@ export default function VerifyEmailPage() {
         </form>
       </Card>
     </div>
+  )
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyEmailContent />
+    </Suspense>
   )
 }

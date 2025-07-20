@@ -64,7 +64,7 @@ export default function RegisterPage() {
         const data = await response.json()
         setError(data.message || "Failed to create account")
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)

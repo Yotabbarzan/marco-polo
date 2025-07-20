@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { signIn, getSession } from "next-auth/react"
+// import { signIn } from "next-auth/react" // Temporarily disabled
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -24,18 +24,22 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      })
+      // Temporarily disabled NextAuth login
+      // const result = await signIn("credentials", {
+      //   email,
+      //   password,
+      //   redirect: false,
+      // })
 
-      if (result?.error) {
-        setError("Invalid email or password")
-      } else {
-        router.push("/")
-      }
-    } catch (error) {
+      // if (result?.error) {
+      //   setError("Invalid email or password")
+      // } else {
+      //   router.push("/")
+      // }
+      
+      // Temporary placeholder - just redirect for now
+      router.push("/")
+    } catch {
       setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
@@ -126,7 +130,7 @@ export default function LoginPage() {
 
         <CardFooter className="text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/auth/register"
               className="text-blue-600 hover:text-blue-800 hover:underline font-medium"

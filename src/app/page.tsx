@@ -47,11 +47,11 @@ export default function Home() {
               <Image
                 src="/marcopolo-360-logo.png"
                 alt="Marcopolo 360 Logo"
-                width={40}
-                height={40}
+                width={56}
+                height={56}
                 className="rounded-lg"
               />
-              <h1 className="text-2xl font-bold text-gray-900">Marcopolo 360</h1>
+              <h1 className="text-xl font-bold text-gray-900">Marcopolo 360</h1>
             </div>
             <nav className="flex space-x-6">
               <a href="#" className="text-gray-600 hover:text-slate-600">How it works</a>
@@ -450,11 +450,11 @@ export default function Home() {
             <Image
               src="/marcopolo-360-logo.png"
               alt="Marcopolo 360 Logo"
-              width={32}
-              height={32}
+              width={48}
+              height={48}
               className="rounded-lg"
             />
-            <h1 className="text-2xl font-bold">Marcopolo 360</h1>
+            <h1 className="text-xl font-bold">Marcopolo 360</h1>
           </div>
           <p className="text-gray-400 mb-4">Connecting travelers and senders worldwide</p>
           <div className="flex justify-center space-x-6 text-sm text-gray-400">

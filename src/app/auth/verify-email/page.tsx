@@ -109,8 +109,8 @@ function VerifyEmailContent() {
             <Image
               src="/marcopolo-360-logo.png"
               alt="Marcopolo 360 Logo"
-              width={120}
-              height={120}
+              width={140}
+              height={140}
               className="mb-2"
             />
           </div>

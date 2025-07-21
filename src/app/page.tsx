@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { ChevronRight, Plane, Package, MapPin, Calendar, DollarSign, Star, MessageCircle, LogOut, User } from 'lucide-react';
 
@@ -57,6 +58,7 @@ export default function Home() {
             <nav className="flex items-center space-x-6">
               <a href="#" className="text-gray-600 hover:text-slate-600">How it works</a>
               <a href="#" className="text-gray-600 hover:text-slate-600">Safety</a>
+              <a href="/posts/travellers" className="text-gray-600 hover:text-slate-600">Browse Travellers</a>
               
               {status === "loading" && (
                 <div className="text-gray-600">Loading...</div>
@@ -260,13 +262,23 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={nextStep}
-                    className="w-full bg-slate-700 text-white py-3 px-6 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center"
-                  >
-                    {activeTab === 'sender' ? 'Find Carriers' : 'Post Trip'}
-                    <ChevronRight className="w-5 h-5 ml-2" />
-                  </button>
+                  {status === "authenticated" ? (
+                    <Link 
+                      href={activeTab === 'sender' ? '/posts/travellers' : '/posts/traveller/new'}
+                      className="w-full bg-slate-700 text-white py-3 px-6 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center"
+                    >
+                      {activeTab === 'sender' ? 'Find Carriers' : 'Post Trip'}
+                      <ChevronRight className="w-5 h-5 ml-2" />
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={nextStep}
+                      className="w-full bg-slate-700 text-white py-3 px-6 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center"
+                    >
+                      {activeTab === 'sender' ? 'Find Carriers' : 'Post Trip'}
+                      <ChevronRight className="w-5 h-5 ml-2" />
+                    </button>
+                  )}
                 </div>
               )}
 

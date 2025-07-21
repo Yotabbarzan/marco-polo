@@ -104,7 +104,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <button className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-slate-300 hover:bg-gray-50 transition-colors">
+            <Link href="/posts/sender/new" className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-slate-300 hover:bg-gray-50 transition-colors">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Package className="w-5 h-5 text-blue-600" />
               </div>
@@ -112,9 +112,9 @@ export default function Dashboard() {
                 <p className="font-medium text-gray-900">Send an Item</p>
                 <p className="text-sm text-gray-600">Find carriers for your packages</p>
               </div>
-            </button>
+            </Link>
 
-            <button className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-slate-300 hover:bg-gray-50 transition-colors">
+            <Link href="/posts/traveller/new" className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-slate-300 hover:bg-gray-50 transition-colors">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <Plane className="w-5 h-5 text-green-600" />
               </div>
@@ -122,7 +122,33 @@ export default function Dashboard() {
                 <p className="font-medium text-gray-900">Post a Trip</p>
                 <p className="text-sm text-gray-600">Offer space in your luggage</p>
               </div>
-            </button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Browse Posts */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Browse Marketplace</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link href="/posts/travellers" className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-slate-300 hover:bg-gray-50 transition-colors">
+              <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                <Plane className="w-5 h-5 text-teal-600" />
+              </div>
+              <div className="text-left">
+                <p className="font-medium text-gray-900">Browse Travellers</p>
+                <p className="text-sm text-gray-600">Find people offering luggage space</p>
+              </div>
+            </Link>
+
+            <Link href="/posts/senders" className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:border-slate-300 hover:bg-gray-50 transition-colors">
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <Package className="w-5 h-5 text-orange-600" />
+              </div>
+              <div className="text-left">
+                <p className="font-medium text-gray-900">Browse Sender Requests</p>
+                <p className="text-sm text-gray-600">See items people want to send</p>
+              </div>
+            </Link>
           </div>
         </div>
 

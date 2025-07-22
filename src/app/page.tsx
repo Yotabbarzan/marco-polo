@@ -4,7 +4,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { ChevronRight, Plane, Package, MapPin, Calendar, DollarSign, Star, MessageCircle, LogOut, User } from 'lucide-react';
+import { ChevronRight, Plane, Package, Calendar, DollarSign, Star, MessageCircle, LogOut, User } from 'lucide-react';
+import { CityAutocomplete } from '@/components/ui/city-autocomplete';
+import type { City } from '@/lib/cities';
+import type { ApiCity } from '@/lib/api-cities';
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -19,8 +22,22 @@ export default function Home() {
     date: ''
   });
 
+  // City autocomplete inputs for homepage demo
+  const [fromCityInput, setFromCityInput] = useState('');
+  const [toCityInput, setToCityInput] = useState('');
+
   const handleInputChange = (field: string, value: string) => {
     setDemoData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFromCitySelect = (city: City | ApiCity) => {
+    setDemoData(prev => ({ ...prev, from: `${city.name}, ${city.country}` }));
+    setFromCityInput(city.name);
+  };
+
+  const handleToCitySelect = (city: City | ApiCity) => {
+    setDemoData(prev => ({ ...prev, to: `${city.name}, ${city.country}` }));
+    setToCityInput(city.name);
   };
 
   const nextStep = () => {
@@ -32,6 +49,8 @@ export default function Home() {
   const resetDemo = () => {
     setCurrentStep(1);
     setDemoData({ from: '', to: '', item: '', weight: '', price: '', date: '' });
+    setFromCityInput('');
+    setToCityInput('');
   };
 
   const mockCarriers = [
@@ -174,33 +193,25 @@ export default function Home() {
                   </h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">From</label>
-                      <div className="relative">
-                        <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-                        <input
-                          type="text"
-                          placeholder="New York, NY"
-                          value={demoData.from}
-                          onChange={(e) => handleInputChange('from', e.target.value)}
-                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
-                        />
-                      </div>
-                    </div>
+                    <CityAutocomplete
+                      label="From"
+                      placeholder="Search departure city..."
+                      value={fromCityInput}
+                      onCitySelect={handleFromCitySelect}
+                      onInputChange={setFromCityInput}
+                      id="homepage-from-city"
+                      className="space-y-2"
+                    />
                     
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">To</label>
-                      <div className="relative">
-                        <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-                        <input
-                          type="text"
-                          placeholder="London, UK"
-                          value={demoData.to}
-                          onChange={(e) => handleInputChange('to', e.target.value)}
-                          className="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-transparent"
-                        />
-                      </div>
-                    </div>
+                    <CityAutocomplete
+                      label="To"
+                      placeholder="Search destination city..."
+                      value={toCityInput}
+                      onCitySelect={handleToCitySelect}
+                      onInputChange={setToCityInput}
+                      id="homepage-to-city"
+                      className="space-y-2"
+                    />
                   </div>
 
                   {activeTab === 'sender' && (

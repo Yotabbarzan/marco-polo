@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Latest Updates
+- ✅ Phase 2: Core marketplace features implemented  
+- 🌍 API-based comprehensive city search system
+
 ## Getting Started
 
 First, run the development server:

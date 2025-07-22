@@ -10,7 +10,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CityAutocomplete } from "@/components/ui/city-autocomplete"
 import { Plane, MapPin, Weight, DollarSign, ArrowLeft } from "lucide-react"
+import type { City } from "@/lib/cities"
 
 interface TravellerPostData {
   departureCountry: string
@@ -52,6 +54,10 @@ export default function CreateTravellerPost() {
     deliveryLocation: "",
   })
   
+  // Separate state for city search inputs
+  const [departureCityInput, setDepartureCityInput] = useState("")
+  const [arrivalCityInput, setArrivalCityInput] = useState("")
+  
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
 
@@ -71,6 +77,26 @@ export default function CreateTravellerPost() {
 
   const handleInputChange = (field: keyof TravellerPostData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleDepartureCitySelect = (city: City) => {
+    setFormData(prev => ({
+      ...prev,
+      departureCountry: city.country,
+      departureCity: city.name,
+      departureAirport: city.mainAirport || city.airports[0] || "",
+    }))
+    setDepartureCityInput(city.name)
+  }
+
+  const handleArrivalCitySelect = (city: City) => {
+    setFormData(prev => ({
+      ...prev,
+      arrivalCountry: city.country,
+      arrivalCity: city.name,
+      arrivalAirport: city.mainAirport || city.airports[0] || "",
+    }))
+    setArrivalCityInput(city.name)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -185,24 +211,24 @@ export default function CreateTravellerPost() {
                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="departureCountry">Country *</Label>
-                    <Input
-                      id="departureCountry"
-                      placeholder="e.g., United States"
-                      value={formData.departureCountry}
-                      onChange={(e) => handleInputChange("departureCountry", e.target.value)}
-                      required
-                    />
-                  </div>
+                  <CityAutocomplete
+                    label="Departure City"
+                    placeholder="Search for departure city..."
+                    value={departureCityInput}
+                    onCitySelect={handleDepartureCitySelect}
+                    onInputChange={setDepartureCityInput}
+                    required
+                    id="departureCity"
+                  />
                   
                   <div className="space-y-2">
-                    <Label htmlFor="departureCity">City</Label>
+                    <Label htmlFor="departureCountry">Country</Label>
                     <Input
-                      id="departureCity"
-                      placeholder="e.g., New York"
-                      value={formData.departureCity}
-                      onChange={(e) => handleInputChange("departureCity", e.target.value)}
+                      id="departureCountry"
+                      placeholder="Auto-filled when city is selected"
+                      value={formData.departureCountry}
+                      readOnly
+                      className="bg-gray-50"
                     />
                   </div>
                 </div>
@@ -212,9 +238,10 @@ export default function CreateTravellerPost() {
                     <Label htmlFor="departureAirport">Airport Code</Label>
                     <Input
                       id="departureAirport"
-                      placeholder="e.g., JFK"
+                      placeholder="Auto-filled from city"
                       value={formData.departureAirport}
                       onChange={(e) => handleInputChange("departureAirport", e.target.value)}
+                      className="bg-gray-50"
                     />
                   </div>
                   
@@ -249,24 +276,24 @@ export default function CreateTravellerPost() {
                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="arrivalCountry">Country *</Label>
-                    <Input
-                      id="arrivalCountry"
-                      placeholder="e.g., United Kingdom"
-                      value={formData.arrivalCountry}
-                      onChange={(e) => handleInputChange("arrivalCountry", e.target.value)}
-                      required
-                    />
-                  </div>
+                  <CityAutocomplete
+                    label="Arrival City"
+                    placeholder="Search for arrival city..."
+                    value={arrivalCityInput}
+                    onCitySelect={handleArrivalCitySelect}
+                    onInputChange={setArrivalCityInput}
+                    required
+                    id="arrivalCity"
+                  />
                   
                   <div className="space-y-2">
-                    <Label htmlFor="arrivalCity">City</Label>
+                    <Label htmlFor="arrivalCountry">Country</Label>
                     <Input
-                      id="arrivalCity"
-                      placeholder="e.g., London"
-                      value={formData.arrivalCity}
-                      onChange={(e) => handleInputChange("arrivalCity", e.target.value)}
+                      id="arrivalCountry"
+                      placeholder="Auto-filled when city is selected"
+                      value={formData.arrivalCountry}
+                      readOnly
+                      className="bg-gray-50"
                     />
                   </div>
                 </div>
@@ -276,9 +303,10 @@ export default function CreateTravellerPost() {
                     <Label htmlFor="arrivalAirport">Airport Code</Label>
                     <Input
                       id="arrivalAirport"
-                      placeholder="e.g., LHR"
+                      placeholder="Auto-filled from city"
                       value={formData.arrivalAirport}
                       onChange={(e) => handleInputChange("arrivalAirport", e.target.value)}
+                      className="bg-gray-50"
                     />
                   </div>
                   

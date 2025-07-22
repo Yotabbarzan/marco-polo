@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { CityAutocomplete } from "@/components/ui/city-autocomplete"
+import type { City } from "@/lib/cities"
 import { 
   Plane, 
   MapPin, 
@@ -90,6 +92,10 @@ function TravellerPostsContent() {
     dateFrom: "",
     dateTo: "",
   })
+  
+  // City autocomplete inputs
+  const [departureCityInput, setDepartureCityInput] = useState("")
+  const [arrivalCityInput, setArrivalCityInput] = useState("")
 
   const successMessage = searchParams.get('message')
 
@@ -134,6 +140,16 @@ function TravellerPostsContent() {
 
   const handleFilterChange = (field: string, value: string) => {
     setFilters(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleDepartureCitySelect = (city: City) => {
+    setFilters(prev => ({ ...prev, departureCountry: city.country }))
+    setDepartureCityInput(city.name)
+  }
+
+  const handleArrivalCitySelect = (city: City) => {
+    setFilters(prev => ({ ...prev, arrivalCountry: city.country }))
+    setArrivalCityInput(city.name)
   }
 
   const handleSearch = () => {
@@ -229,25 +245,23 @@ function TravellerPostsContent() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="departureCountry">From Country</Label>
-                <Input
-                  id="departureCountry"
-                  placeholder="e.g., United States"
-                  value={filters.departureCountry}
-                  onChange={(e) => handleFilterChange("departureCountry", e.target.value)}
-                />
-              </div>
+              <CityAutocomplete
+                label="From City"
+                placeholder="Search departure city..."
+                value={departureCityInput}
+                onCitySelect={handleDepartureCitySelect}
+                onInputChange={setDepartureCityInput}
+                id="departureCity"
+              />
               
-              <div className="space-y-2">
-                <Label htmlFor="arrivalCountry">To Country</Label>
-                <Input
-                  id="arrivalCountry"
-                  placeholder="e.g., United Kingdom"
-                  value={filters.arrivalCountry}
-                  onChange={(e) => handleFilterChange("arrivalCountry", e.target.value)}
-                />
-              </div>
+              <CityAutocomplete
+                label="To City"
+                placeholder="Search arrival city..."
+                value={arrivalCityInput}
+                onCitySelect={handleArrivalCitySelect}
+                onInputChange={setArrivalCityInput}
+                id="arrivalCity"
+              />
               
               <div className="space-y-2">
                 <Label htmlFor="dateFrom">From Date</Label>

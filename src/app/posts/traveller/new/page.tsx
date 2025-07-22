@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CityAutocomplete } from "@/components/ui/city-autocomplete"
 import { Plane, MapPin, Weight, DollarSign, ArrowLeft } from "lucide-react"
 import type { City } from "@/lib/cities"
+import type { ApiCity } from "@/lib/api-cities"
 
 interface TravellerPostData {
   departureCountry: string
@@ -79,22 +80,28 @@ export default function CreateTravellerPost() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleDepartureCitySelect = (city: City) => {
+  const handleDepartureCitySelect = (city: City | ApiCity) => {
+    const airports = 'airports' in city ? city.airports : []
+    const mainAirport = 'mainAirport' in city ? city.mainAirport : airports[0]
+    
     setFormData(prev => ({
       ...prev,
       departureCountry: city.country,
       departureCity: city.name,
-      departureAirport: city.mainAirport || city.airports[0] || "",
+      departureAirport: mainAirport || "",
     }))
     setDepartureCityInput(city.name)
   }
 
-  const handleArrivalCitySelect = (city: City) => {
+  const handleArrivalCitySelect = (city: City | ApiCity) => {
+    const airports = 'airports' in city ? city.airports : []
+    const mainAirport = 'mainAirport' in city ? city.mainAirport : airports[0]
+    
     setFormData(prev => ({
       ...prev,
       arrivalCountry: city.country,
       arrivalCity: city.name,
-      arrivalAirport: city.mainAirport || city.airports[0] || "",
+      arrivalAirport: mainAirport || "",
     }))
     setArrivalCityInput(city.name)
   }

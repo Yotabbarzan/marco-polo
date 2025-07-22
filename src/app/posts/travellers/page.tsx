@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CityAutocomplete } from "@/components/ui/city-autocomplete"
 import type { City } from "@/lib/cities"
+import type { ApiCity } from "@/lib/api-cities"
 import { 
   Plane, 
   MapPin, 
@@ -142,12 +143,12 @@ function TravellerPostsContent() {
     setFilters(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleDepartureCitySelect = (city: City) => {
+  const handleDepartureCitySelect = (city: City | ApiCity) => {
     setFilters(prev => ({ ...prev, departureCountry: city.country }))
     setDepartureCityInput(city.name)
   }
 
-  const handleArrivalCitySelect = (city: City) => {
+  const handleArrivalCitySelect = (city: City | ApiCity) => {
     setFilters(prev => ({ ...prev, arrivalCountry: city.country }))
     setArrivalCityInput(city.name)
   }

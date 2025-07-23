@@ -275,10 +275,10 @@ export default function Home() {
 
                   {status === "authenticated" ? (
                     <Link 
-                      href={activeTab === 'sender' ? '/posts/travellers' : '/posts/traveller/new'}
+                      href={activeTab === 'sender' ? '/posts/sender/new' : '/posts/traveller/new'}
                       className="w-full bg-slate-700 text-white py-3 px-6 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center"
                     >
-                      {activeTab === 'sender' ? 'Find Carriers' : 'Post Trip'}
+                      {activeTab === 'sender' ? 'Create Luggage Post' : 'Post Trip'}
                       <ChevronRight className="w-5 h-5 ml-2" />
                     </Link>
                   ) : (

@@ -93,17 +93,22 @@ export default function Home() {
 
   useEffect(() => {
     // Load posts for everyone, no authentication required for viewing
+    // Re-fetch when session changes to apply user filtering
     fetchFeedPosts()
-  }, [])
+  }, [session])
 
   const fetchFeedPosts = async () => {
     try {
       setLoading(true)
       
-      // Fetch both traveller and sender posts
+      // Get current user ID to exclude their posts from homepage feed
+      const userId = (session?.user as { id: string })?.id
+      const userFilter = userId ? `&excludeUser=${userId}` : ''
+      
+      // Fetch both traveller and sender posts (excluding current user's posts)
       const [travellerResponse, senderResponse] = await Promise.all([
-        fetch('/api/posts/traveller?limit=10'),
-        fetch('/api/posts/sender?limit=10')
+        fetch(`/api/posts/traveller?limit=10${userFilter}`),
+        fetch(`/api/posts/sender?limit=10${userFilter}`)
       ])
 
       if (travellerResponse.ok && senderResponse.ok) {

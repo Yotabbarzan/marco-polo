@@ -140,6 +140,7 @@ export async function GET(request: NextRequest) {
     const dateFrom = searchParams.get('dateFrom')
     const dateTo = searchParams.get('dateTo')
     const userId = searchParams.get('userId')
+    const excludeUser = searchParams.get('excludeUser')
 
     const skip = (page - 1) * limit
 
@@ -158,6 +159,12 @@ export async function GET(request: NextRequest) {
 
     if (userId) {
       where.userId = userId
+    }
+
+    if (excludeUser) {
+      where.userId = {
+        not: excludeUser
+      }
     }
 
     if (departureCountry) {

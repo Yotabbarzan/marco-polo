@@ -8,9 +8,6 @@ import {
   ArrowLeft,
   Plane,
   Package,
-  Plus,
-  MapPin,
-  Calendar,
   Weight,
   DollarSign,
   X
@@ -18,6 +15,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { TravellerPostForm } from "@/components/forms/traveller-post-form"
+import { SenderPostForm } from "@/components/forms/sender-post-form"
 
 interface TravellerPost {
   id: string
@@ -55,6 +54,7 @@ export default function MyPostsPage() {
   const [loading, setLoading] = useState(true)
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [createType, setCreateType] = useState<'traveller' | 'sender' | null>(null)
+  const [formLoading, setFormLoading] = useState(false)
 
   useEffect(() => {
     if (status === "loading") return
@@ -126,6 +126,84 @@ export default function MyPostsPage() {
     setCreateModalOpen(false)
     setCreateType(null)
     fetchUserPosts() // Refresh the posts
+  }
+
+  const handleTravellerSubmit = async (data: {
+    departureCountry: string
+    departureCity: string
+    departureAirport?: string
+    departureDate: Date
+    departureTime?: string
+    arrivalCountry: string
+    arrivalCity: string
+    arrivalAirport?: string
+    arrivalDate: Date
+    arrivalTime?: string
+    availableWeight: number
+    pricePerKg: number
+    specialNotes?: string
+    pickupLocation?: string
+    deliveryLocation?: string
+  }) => {
+    setFormLoading(true)
+    try {
+      const response = await fetch("/api/posts/traveller", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (response.ok) {
+        handleCreateComplete()
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to create post")
+      }
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const handleSenderSubmit = async (data: {
+    originCountry: string
+    originCity: string
+    originAddress?: string
+    destinationCountry: string
+    destinationCity: string
+    destinationAddress?: string
+    itemCategory: string
+    itemDescription: string
+    weight: number
+    specialNotes?: string
+    pickupNotes?: string
+    deliveryNotes?: string
+  }) => {
+    setFormLoading(true)
+    try {
+      const response = await fetch("/api/posts/sender", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (response.ok) {
+        handleCreateComplete()
+      } else {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to create post")
+      }
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const handleFormCancel = () => {
+    setCreateModalOpen(false)
+    setCreateType(null)
   }
 
   if (status === "loading") {
@@ -290,24 +368,19 @@ export default function MyPostsPage() {
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4">
-            <p className="text-gray-600 mb-4">
-              {createType === 'traveller' 
-                ? 'Create a post to offer luggage space on your trip'
-                : 'Create a post to find someone to carry your items'
-              }
-            </p>
-            {/* TODO: Embed the actual form components here */}
-            <div className="text-center py-8 text-gray-500">
-              Form will be embedded here ({createType} form)
-            </div>
-            <div className="flex space-x-3 pt-4">
-              <Button onClick={() => setCreateModalOpen(false)} variant="outline" className="flex-1">
-                Cancel
-              </Button>
-              <Button onClick={handleCreateComplete} className="flex-1 bg-blue-600 hover:bg-blue-700">
-                Create Post
-              </Button>
-            </div>
+            {createType === 'traveller' ? (
+              <TravellerPostForm
+                onSubmit={handleTravellerSubmit}
+                onCancel={handleFormCancel}
+                isLoading={formLoading}
+              />
+            ) : createType === 'sender' ? (
+              <SenderPostForm
+                onSubmit={handleSenderSubmit}
+                onCancel={handleFormCancel}
+                isLoading={formLoading}
+              />
+            ) : null}
           </div>
         </DialogContent>
       </Dialog>

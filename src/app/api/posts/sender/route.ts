@@ -122,6 +122,7 @@ export async function GET(request: NextRequest) {
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
     const userId = searchParams.get('userId')
+    const excludeUser = searchParams.get('excludeUser')
 
     const skip = (page - 1) * limit
 
@@ -133,6 +134,12 @@ export async function GET(request: NextRequest) {
 
     if (userId) {
       where.userId = userId
+    }
+
+    if (excludeUser) {
+      where.userId = {
+        not: excludeUser
+      }
     }
 
     if (originCountry) {

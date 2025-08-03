@@ -425,7 +425,7 @@ export default function Dashboard() {
             <button className="p-3 rounded-lg bg-blue-100">
               <Home className="w-6 h-6 text-blue-600" />
             </button>
-            <Link href="/posts/sender/new" className="p-3 rounded-lg">
+            <Link href="/posts/new" className="p-3 rounded-lg">
               <Plus className="w-6 h-6 text-gray-600" />
             </Link>
             <Link href="/messages" className="p-3 rounded-lg">

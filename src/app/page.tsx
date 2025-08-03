@@ -192,7 +192,7 @@ export default function Home() {
       router.push('/auth/login')
       return
     }
-    router.push('/posts/sender/new')
+    router.push('/posts/new')
   }
 
   const handleMessagesClick = () => {

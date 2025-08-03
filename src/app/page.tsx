@@ -454,11 +454,11 @@ export default function Home() {
             <button className="p-3 rounded-lg">
               <Settings className="w-6 h-6 text-gray-600" />
             </button>
-            <button className="p-3 rounded-lg">
+            <Link href={session ? "/my-posts" : "/auth/login"} className="p-3 rounded-lg">
               <div className="w-6 h-6 bg-gray-600 rounded flex items-center justify-center">
                 <User className="w-4 h-4 text-white" />
               </div>
-            </button>
+            </Link>
             <button className="p-3 rounded-lg bg-blue-100">
               <HomeIcon className="w-6 h-6 text-blue-600" />
             </button>

@@ -94,13 +94,10 @@ export default function Dashboard() {
   useEffect(() => {
     if (status === "loading") return
     if (!session) router.push("/auth/login")
-  }, [session, status, router])
-
-  useEffect(() => {
-    if (session) {
+    else {
       fetchFeedPosts()
     }
-  }, [session])
+  }, [session, status, router])
 
   const fetchFeedPosts = async () => {
     try {

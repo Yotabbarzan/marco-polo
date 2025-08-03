@@ -121,6 +121,7 @@ export async function GET(request: NextRequest) {
     const maxWeight = searchParams.get('maxWeight')
     const minPrice = searchParams.get('minPrice')
     const maxPrice = searchParams.get('maxPrice')
+    const userId = searchParams.get('userId')
 
     const skip = (page - 1) * limit
 
@@ -128,6 +129,10 @@ export async function GET(request: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: Record<string, any> = {
       status: 'ACTIVE',
+    }
+
+    if (userId) {
+      where.userId = userId
     }
 
     if (originCountry) {

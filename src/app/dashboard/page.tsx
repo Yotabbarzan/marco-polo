@@ -16,6 +16,7 @@ import {
   MapPin,
   Package
 } from "lucide-react"
+import { RequestModal } from "@/components/requests/request-modal"
 
 interface TravellerPost {
   id: string
@@ -83,6 +84,12 @@ export default function Dashboard() {
   const router = useRouter()
   const [posts, setPosts] = useState<FeedPost[]>([])
   const [loading, setLoading] = useState(true)
+  const [requestModalOpen, setRequestModalOpen] = useState(false)
+  const [selectedPost, setSelectedPost] = useState<{
+    id: string
+    type: 'traveller' | 'sender'
+    data: TravellerPost | SenderPost
+  } | null>(null)
 
   useEffect(() => {
     if (status === "loading") return
@@ -156,6 +163,30 @@ export default function Dashboard() {
     return flags[country] || '🌍'
   }
 
+  const handlePostClick = (post: FeedPost) => {
+    // Don't show request modal for user's own posts
+    if (post.user.id === (session?.user as { id: string })?.id) {
+      return
+    }
+
+    setSelectedPost({
+      id: post.id,
+      type: post.type,
+      data: post
+    })
+    setRequestModalOpen(true)
+  }
+
+  const handleRequestCreated = () => {
+    // Refresh the feed to show updated data
+    fetchFeedPosts()
+  }
+
+  const closeRequestModal = () => {
+    setRequestModalOpen(false)
+    setSelectedPost(null)
+  }
+
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -216,8 +247,24 @@ export default function Dashboard() {
         ) : (
           <div className="space-y-4">
             {posts.map((post) => (
-              <div key={`${post.type}-${post.id}`} className="bg-white rounded-lg shadow-sm border">
+              <div 
+                key={`${post.type}-${post.id}`} 
+                className={`bg-white rounded-lg shadow-sm border transition-all ${
+                  post.user.id === (session?.user as { id: string })?.id 
+                    ? 'border-blue-200 bg-blue-50/30' 
+                    : 'hover:shadow-md hover:border-blue-200 cursor-pointer'
+                }`}
+                onClick={() => handlePostClick(post)}
+              >
                 <div className="p-4">
+                  {/* Own post indicator */}
+                  {post.user.id === (session?.user as { id: string })?.id && (
+                    <div className="mb-2">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        Your Post
+                      </span>
+                    </div>
+                  )}
                   {post.type === 'traveller' ? (
                     // Traveller Post Card
                     <div className="space-y-4">
@@ -384,15 +431,23 @@ export default function Dashboard() {
             <Link href="/posts/sender/new" className="p-3 rounded-lg">
               <Plus className="w-6 h-6 text-gray-600" />
             </Link>
-            <button className="p-3 rounded-lg">
+            <Link href="/messages" className="p-3 rounded-lg">
               <MessageCircle className="w-6 h-6 text-gray-600" />
-            </button>
+            </Link>
           </div>
         </div>
       </nav>
 
       {/* Bottom padding to account for fixed navigation */}
       <div className="h-20"></div>
+
+      {/* Request Modal */}
+      <RequestModal
+        isOpen={requestModalOpen}
+        onClose={closeRequestModal}
+        targetPost={selectedPost}
+        onRequestCreated={handleRequestCreated}
+      />
     </div>
   )
 }

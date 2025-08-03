@@ -4,10 +4,7 @@ import bcrypt from "bcryptjs"
 
 export async function POST(request: NextRequest) {
   try {
-    // Only allow in development
-    if (process.env.NODE_ENV === 'production') {
-      return NextResponse.json({ message: "Not allowed in production" }, { status: 403 })
-    }
+    // Allow for initial setup - will remove this endpoint after use
 
     const hashedPassword = await bcrypt.hash('password123', 12)
     

@@ -378,23 +378,82 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* Header - Desktop Website Style */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-md mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">MP</span>
+        {/* Desktop Header */}
+        <div className="hidden md:block">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold">MP</span>
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold text-gray-900">Marco Polo</h1>
+                    <p className="text-sm text-gray-600">Global Luggage Sharing Platform</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <MapPin className="w-4 h-4 text-gray-400" />
-                <span className="text-sm text-gray-600">Marco Polo</span>
+              
+              <div className="flex-1 max-w-md mx-8">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search destinations, routes..."
+                    className="w-full bg-gray-100 rounded-full py-2 px-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <Search className="w-4 h-4 text-gray-500 absolute right-3 top-2.5" />
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                {session ? (
+                  <div className="flex items-center space-x-4">
+                    <Link href="/my-posts" className="text-sm text-gray-600 hover:text-gray-900">
+                      My Posts
+                    </Link>
+                    <Link href="/messages" className="text-sm text-gray-600 hover:text-gray-900">
+                      Messages
+                    </Link>
+                    <span className="text-sm text-gray-600">Welcome, {session.user?.name}</span>
+                    <Link href="/posts/new" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
+                      Create Post
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-3">
+                    <Link href="/auth/login" className="text-sm text-blue-600 hover:text-blue-700">
+                      Sign In
+                    </Link>
+                    <Link href="/auth/register" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
+                      Get Started
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
-            
-            <div className="flex items-center space-x-3">
-              <Search className="w-5 h-5 text-gray-600" />
-              <Menu className="w-5 h-5 text-gray-600" />
+          </div>
+        </div>
+
+        {/* Mobile Header */}
+        <div className="md:hidden">
+          <div className="px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">MP</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <MapPin className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-gray-600">Marco Polo</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Search className="w-5 h-5 text-gray-600" />
+                <Menu className="w-5 h-5 text-gray-600" />
+              </div>
             </div>
           </div>
         </div>
@@ -402,87 +461,175 @@ export default function Home() {
 
       {/* Tab Navigation */}
       <div className="bg-white border-b">
-        <div className="max-w-md mx-auto px-4">
-          <div className="flex">
-            <button
-              onClick={() => setActiveTab('travellers')}
-              className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
-                activeTab === 'travellers'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500'
-              }`}
-            >
-              Travellers
-            </button>
-            <button
-              onClick={() => setActiveTab('luggage')}
-              className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
-                activeTab === 'luggage'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500'
-              }`}
-            >
-              Luggage
-            </button>
+        {/* Desktop Tabs */}
+        <div className="hidden md:block">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex space-x-8">
+              <button
+                onClick={() => setActiveTab('travellers')}
+                className={`py-4 text-sm font-medium border-b-2 ${
+                  activeTab === 'travellers'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Traveller Listings
+              </button>
+              <button
+                onClick={() => setActiveTab('luggage')}
+                className={`py-4 text-sm font-medium border-b-2 ${
+                  activeTab === 'luggage'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Awaiting Shipments
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Tabs */}
+        <div className="md:hidden">
+          <div className="px-4">
+            <div className="flex">
+              <button
+                onClick={() => setActiveTab('travellers')}
+                className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
+                  activeTab === 'travellers'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500'
+                }`}
+              >
+                Travellers
+              </button>
+              <button
+                onClick={() => setActiveTab('luggage')}
+                className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
+                  activeTab === 'luggage'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500'
+                }`}
+              >
+                Luggage
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="max-w-md mx-auto px-4 py-4">
-        {!session && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <div className="text-center">
-              <h3 className="font-medium text-blue-900 mb-1">Welcome to Marco Polo</h3>
-              <p className="text-sm text-blue-700 mb-3">Browse posts and discover opportunities. Sign in to create requests and start conversations.</p>
-              <Link
-                href="/auth/register"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 inline-block"
-              >
-                Get Started
-              </Link>
+      <main>
+        {/* Desktop Layout */}
+        <div className="hidden md:block">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            {!session && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+                <div className="text-center">
+                  <h3 className="text-lg font-medium text-blue-900 mb-2">Welcome to Marco Polo</h3>
+                  <p className="text-blue-700 mb-4">Connect travelers with luggage space to people who need items transported worldwide. Browse posts and discover opportunities.</p>
+                  <Link
+                    href="/auth/register"
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 inline-block"
+                  >
+                    Get Started
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {loading ? (
+              <div className="text-center py-16">
+                <div className="text-xl text-gray-600">Loading posts...</div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {activeTab === 'travellers' && (
+                  <>
+                    {travellerPosts.length > 0 ? (
+                      travellerPosts.map(renderTravellerCard)
+                    ) : (
+                      <div className="col-span-full text-center py-16">
+                        <Package className="w-20 h-20 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 text-lg">No traveller posts available</p>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {activeTab === 'luggage' && (
+                  <>
+                    {senderPosts.length > 0 ? (
+                      senderPosts.map(renderSenderCard)
+                    ) : (
+                      <div className="col-span-full text-center py-16">
+                        <Package className="w-20 h-20 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 text-lg">No luggage requests available</p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Layout */}
+        <div className="md:hidden px-4 py-4">
+          {!session && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <div className="text-center">
+                <h3 className="font-medium text-blue-900 mb-1">Welcome to Marco Polo</h3>
+                <p className="text-sm text-blue-700 mb-3">Browse posts and discover opportunities. Sign in to create requests and start conversations.</p>
+                <Link
+                  href="/auth/register"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 inline-block"
+                >
+                  Get Started
+                </Link>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="text-lg text-gray-600">Loading posts...</div>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {activeTab === 'travellers' && (
-              <>
-                {travellerPosts.length > 0 ? (
-                  travellerPosts.map(renderTravellerCard)
-                ) : (
-                  <div className="text-center py-12">
-                    <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">No traveller posts available</p>
-                  </div>
-                )}
-              </>
-            )}
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="text-lg text-gray-600">Loading posts...</div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {activeTab === 'travellers' && (
+                <>
+                  {travellerPosts.length > 0 ? (
+                    travellerPosts.map(renderTravellerCard)
+                  ) : (
+                    <div className="text-center py-12">
+                      <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600">No traveller posts available</p>
+                    </div>
+                  )}
+                </>
+              )}
 
-            {activeTab === 'luggage' && (
-              <>
-                {senderPosts.length > 0 ? (
-                  senderPosts.map(renderSenderCard)
-                ) : (
-                  <div className="text-center py-12">
-                    <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">No luggage requests available</p>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
+              {activeTab === 'luggage' && (
+                <>
+                  {senderPosts.length > 0 ? (
+                    senderPosts.map(renderSenderCard)
+                  ) : (
+                    <div className="text-center py-12">
+                      <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600">No luggage requests available</p>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </main>
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
-        <div className="max-w-md mx-auto px-4">
+      {/* Bottom Navigation - Mobile Only */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
+        <div className="px-4">
           <div className="flex items-center justify-around py-2">
             <button className="p-3 rounded-lg">
               <Settings className="w-6 h-6 text-gray-600" />
@@ -505,8 +652,8 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Bottom padding to account for fixed navigation */}
-      <div className="h-20"></div>
+      {/* Bottom padding to account for fixed navigation - Mobile Only */}
+      <div className="md:hidden h-20"></div>
 
       {/* Request Modal */}
       {session && (

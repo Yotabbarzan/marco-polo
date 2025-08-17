@@ -1,6 +1,6 @@
 "use client"
 
-import { useSession, signOut } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Link from "next/link"
@@ -14,7 +14,9 @@ import {
   MessageCircle,
   Star,
   MapPin,
-  Package
+  Package,
+  CheckCircle,
+  Menu
 } from "lucide-react"
 import { RequestModal } from "@/components/requests/request-modal"
 
@@ -80,10 +82,12 @@ interface SenderPost {
 type FeedPost = TravellerPost | SenderPost
 
 export default function Home() {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const router = useRouter()
-  const [posts, setPosts] = useState<FeedPost[]>([])
+  const [travellerPosts, setTravellerPosts] = useState<TravellerPost[]>([])
+  const [senderPosts, setSenderPosts] = useState<SenderPost[]>([])
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState<'travellers' | 'luggage'>('luggage')
   const [requestModalOpen, setRequestModalOpen] = useState(false)
   const [selectedPost, setSelectedPost] = useState<{
     id: string
@@ -92,12 +96,10 @@ export default function Home() {
   } | null>(null)
 
   useEffect(() => {
-    // Load posts for everyone, no authentication required for viewing
-    // Re-fetch when session changes to apply user filtering
-    fetchFeedPosts()
+    fetchPosts()
   }, [session])
 
-  const fetchFeedPosts = async () => {
+  const fetchPosts = async () => {
     try {
       setLoading(true)
       
@@ -107,24 +109,18 @@ export default function Home() {
       
       // Fetch both traveller and sender posts (excluding current user's posts)
       const [travellerResponse, senderResponse] = await Promise.all([
-        fetch(`/api/posts/traveller?limit=10${userFilter}`),
-        fetch(`/api/posts/sender?limit=10${userFilter}`)
+        fetch(`/api/posts/traveller?limit=20${userFilter}`),
+        fetch(`/api/posts/sender?limit=20${userFilter}`)
       ])
 
-      if (travellerResponse.ok && senderResponse.ok) {
+      if (travellerResponse.ok) {
         const travellerData = await travellerResponse.json()
+        setTravellerPosts(travellerData.posts.map((post: TravellerPost) => ({ ...post, type: 'traveller' })))
+      }
+
+      if (senderResponse.ok) {
         const senderData = await senderResponse.json()
-
-        // Add type to distinguish posts and combine
-        const travellerPosts = travellerData.posts.map((post: TravellerPost) => ({ ...post, type: 'traveller' }))
-        const senderPosts = senderData.posts.map((post: SenderPost) => ({ ...post, type: 'sender' }))
-
-        // Combine and sort by creation date
-        const combinedPosts = [...travellerPosts, ...senderPosts].sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-
-        setPosts(combinedPosts)
+        setSenderPosts(senderData.posts.map((post: SenderPost) => ({ ...post, type: 'sender' })))
       }
     } catch (error) {
       console.error('Error fetching posts:', error)
@@ -135,15 +131,15 @@ export default function Home() {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
     })
   }
 
   const formatTime = (timeString?: string) => {
     if (!timeString) return ''
-    return timeString.slice(0, 5) // Format HH:MM
+    return timeString.slice(0, 5)
   }
 
   const getCountryFlag = (country: string) => {
@@ -163,14 +159,8 @@ export default function Home() {
   }
 
   const handlePostClick = (post: FeedPost) => {
-    // If not logged in, redirect to login
     if (!session) {
       router.push('/auth/login')
-      return
-    }
-
-    // Don't show request modal for user's own posts
-    if (post.user.id === (session?.user as { id: string })?.id) {
       return
     }
 
@@ -183,8 +173,7 @@ export default function Home() {
   }
 
   const handleRequestCreated = () => {
-    // Refresh the feed to show updated data
-    fetchFeedPosts()
+    fetchPosts()
   }
 
   const closeRequestModal = () => {
@@ -192,86 +181,263 @@ export default function Home() {
     setSelectedPost(null)
   }
 
-  const handleCreatePostClick = () => {
-    if (!session) {
-      router.push('/auth/login')
-      return
-    }
-    router.push('/posts/new')
+  const renderStars = (rating: number = 0) => {
+    return (
+      <div className="flex items-center space-x-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            className={`w-4 h-4 ${
+              star <= rating
+                ? 'text-yellow-400 fill-yellow-400'
+                : 'text-gray-300'
+            }`}
+          />
+        ))}
+      </div>
+    )
   }
 
-  const handleMessagesClick = () => {
-    if (!session) {
-      router.push('/auth/login')
-      return
-    }
-    router.push('/messages')
-  }
+  const renderTravellerCard = (post: TravellerPost) => (
+    <div 
+      key={`traveller-${post.id}`}
+      className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow"
+      onClick={() => handlePostClick(post)}
+    >
+      {/* Header with route info */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-2">
+          <MapPin className="w-4 h-4 text-gray-400" />
+          <span className="text-sm font-medium text-gray-900">
+            {post.departureCity}, {getCountryFlag(post.departureCountry)}
+          </span>
+          <span className="text-gray-400">→</span>
+          <span className="text-sm font-medium text-gray-900">
+            {post.arrivalCity}, {getCountryFlag(post.arrivalCountry)}
+          </span>
+        </div>
+        <span className="text-xs text-gray-500">
+          {formatDate(post.departureDate)} - {formatTime(post.departureTime)}
+        </span>
+      </div>
+
+      <div className="flex space-x-4">
+        {/* User info */}
+        <div className="flex items-center space-x-3">
+          <div className="relative">
+            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+              {post.user.image ? (
+                <Image
+                  src={post.user.image}
+                  alt={`${post.user.name} avatar`}
+                  width={48}
+                  height={48}
+                  className="rounded-full object-cover"
+                />
+              ) : (
+                <User className="w-6 h-6 text-gray-600" />
+              )}
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-3 h-3 text-white" />
+            </div>
+          </div>
+        </div>
+
+        {/* Post details */}
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-medium text-gray-900">
+              {post.user.name} {post.user.lastName}
+            </h3>
+            {renderStars(post.user.rating)}
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4 text-sm">
+            <div>
+              <span className="text-gray-500">Capacity:</span>
+              <div className="font-medium">{post.availableWeight} KG</div>
+            </div>
+            <div>
+              <span className="text-gray-500">Price:</span>
+              <div className="font-medium">{post.pricePerKg}$/KG</div>
+            </div>
+            <div>
+              <span className="text-gray-500">Item Preference:</span>
+              <div className="font-medium">None</div>
+            </div>
+          </div>
+
+          {post.specialNotes && (
+            <div className="mt-2">
+              <span className="text-gray-500 text-sm">Note:</span>
+              <p className="text-sm text-gray-700">{post.specialNotes}</p>
+            </div>
+          )}
+          
+          <div className="mt-2">
+            <span className="text-gray-500 text-sm">Delivery:</span>
+            <span className="text-sm text-gray-700 ml-1">No</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  const renderSenderCard = (post: SenderPost) => (
+    <div 
+      key={`sender-${post.id}`}
+      className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow"
+      onClick={() => handlePostClick(post)}
+    >
+      {/* Header with route info */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center space-x-2">
+          <MapPin className="w-4 h-4 text-gray-400" />
+          <span className="text-sm font-medium text-gray-900">
+            {post.originCity}, {getCountryFlag(post.originCountry)}
+          </span>
+          <span className="text-gray-400">→</span>
+          <span className="text-sm font-medium text-gray-900">
+            {post.destinationCity}, {getCountryFlag(post.destinationCountry)}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex space-x-4">
+        {/* Item image */}
+        <div className="w-20 h-20 bg-gradient-to-br from-purple-200 to-pink-300 rounded-lg flex items-center justify-center flex-shrink-0">
+          {post.photos && post.photos.length > 0 ? (
+            <Image
+              src={post.photos[0]}
+              alt={post.itemDescription}
+              width={80}
+              height={80}
+              className="rounded-lg object-cover w-full h-full"
+            />
+          ) : (
+            <Package className="w-8 h-8 text-gray-600" />
+          )}
+        </div>
+
+        {/* Post details */}
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="font-medium text-gray-900">
+              {post.user.name} {post.user.lastName}
+            </h3>
+            {renderStars(post.user.rating)}
+          </div>
+          
+          <div className="space-y-1 text-sm">
+            <div>
+              <span className="text-gray-500">Description:</span>
+              <span className="font-medium ml-1">{post.itemDescription}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">Weight:</span>
+              <span className="font-medium ml-1">{post.weight} KG</span>
+            </div>
+            {post.specialNotes && (
+              <div>
+                <span className="text-gray-500">Note:</span>
+                <span className="text-gray-700 ml-1">{post.specialNotes}</span>
+              </div>
+            )}
+            <div>
+              <span className="text-gray-500">Delivery:</span>
+              <span className="text-gray-700 ml-1">{post.deliveryNotes || 'I deliver it myself'}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* User avatar */}
+        <div className="flex-shrink-0">
+          <div className="relative">
+            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+              {post.user.image ? (
+                <Image
+                  src={post.user.image}
+                  alt={`${post.user.name} avatar`}
+                  width={48}
+                  height={48}
+                  className="rounded-full object-cover"
+                />
+              ) : (
+                <User className="w-6 h-6 text-gray-600" />
+              )}
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-3 h-3 text-white" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-        <div className="max-w-4xl mx-auto px-4 py-3">
+        <div className="max-w-md mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <MapPin className="w-6 h-6 text-gray-600" />
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                <div className="w-8 h-0.5 bg-gray-300"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                <div className="w-8 h-0.5 bg-gray-300"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">MP</span>
               </div>
-              <div className="bg-blue-100 p-2 rounded-lg">
-                <span className="text-blue-600 font-medium">MP</span>
+              <div className="flex items-center space-x-2">
+                <MapPin className="w-4 h-4 text-gray-400" />
+                <span className="text-sm text-gray-600">Marco Polo</span>
               </div>
             </div>
             
-            <div className="flex-1 max-w-md mx-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search destinations..."
-                  className="w-full bg-gray-100 rounded-full py-2 px-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <Search className="w-4 h-4 text-gray-500 absolute right-3 top-2.5" />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              {session ? (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600">Welcome, {session.user?.name}</span>
-                  <button 
-                    onClick={() => signOut({ callbackUrl: '/' })}
-                    className="text-sm text-blue-600 hover:text-blue-700"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              ) : (
-                <Link href="/auth/login" className="text-sm text-blue-600 hover:text-blue-700">
-                  Sign In
-                </Link>
-              )}
+            <div className="flex items-center space-x-3">
+              <Search className="w-5 h-5 text-gray-600" />
+              <Menu className="w-5 h-5 text-gray-600" />
             </div>
           </div>
         </div>
       </header>
 
+      {/* Tab Navigation */}
+      <div className="bg-white border-b">
+        <div className="max-w-md mx-auto px-4">
+          <div className="flex">
+            <button
+              onClick={() => setActiveTab('travellers')}
+              className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
+                activeTab === 'travellers'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-500'
+              }`}
+            >
+              Travellers
+            </button>
+            <button
+              onClick={() => setActiveTab('luggage')}
+              className={`flex-1 py-3 text-center text-sm font-medium border-b-2 ${
+                activeTab === 'luggage'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-500'
+              }`}
+            >
+              Luggage
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="max-w-md mx-auto px-4 py-4">
         {!session && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-blue-900">Welcome to Marco Polo 360</h3>
-                <p className="text-sm text-blue-700">Browse posts and discover opportunities. Sign in to create requests and start conversations.</p>
-              </div>
+            <div className="text-center">
+              <h3 className="font-medium text-blue-900 mb-1">Welcome to Marco Polo</h3>
+              <p className="text-sm text-blue-700 mb-3">Browse posts and discover opportunities. Sign in to create requests and start conversations.</p>
               <Link
                 href="/auth/register"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 inline-block"
               >
                 Get Started
               </Link>
@@ -285,176 +451,38 @@ export default function Home() {
           </div>
         ) : (
           <div className="space-y-4">
-            {posts.map((post) => (
-              <div 
-                key={`${post.type}-${post.id}`} 
-                className={`bg-white rounded-lg shadow-sm border transition-all ${
-                  post.user.id === (session?.user as { id: string })?.id 
-                    ? 'border-blue-200 bg-blue-50/30' 
-                    : 'hover:shadow-md hover:border-blue-200 cursor-pointer'
-                }`}
-                onClick={() => handlePostClick(post)}
-              >
-                <div className="p-4">
-                  {/* Own post indicator */}
-                  {session && post.user.id === (session?.user as { id: string })?.id && (
-                    <div className="mb-2">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        Your Post
-                      </span>
-                    </div>
-                  )}
-                  {post.type === 'traveller' ? (
-                    // Traveller Post Card
-                    <div className="space-y-4">
-                      {/* Departure/Arrival Info */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-gray-100 rounded-lg p-3">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span className="text-lg">{getCountryFlag((post as TravellerPost).departureCountry)}</span>
-                            <span className="font-medium text-sm">Departure</span>
-                          </div>
-                          <p className="font-semibold text-gray-900">
-                            {(post as TravellerPost).departureCity}, {(post as TravellerPost).departureCountry}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {formatDate((post as TravellerPost).departureDate)}
-                            {(post as TravellerPost).departureTime && `, ${formatTime((post as TravellerPost).departureTime)}`}
-                          </p>
-                        </div>
-
-                        <div className="bg-gray-100 rounded-lg p-3">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span className="text-lg">{getCountryFlag((post as TravellerPost).arrivalCountry)}</span>
-                            <span className="font-medium text-sm">Arrival</span>
-                          </div>
-                          <p className="font-semibold text-gray-900">
-                            {(post as TravellerPost).arrivalCity}, {(post as TravellerPost).arrivalCountry}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {formatDate((post as TravellerPost).arrivalDate)}
-                            {(post as TravellerPost).arrivalTime && `, ${formatTime((post as TravellerPost).arrivalTime)}`}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Capacity and Price */}
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-600">Capacity:</p>
-                          <p className="font-semibold">{(post as TravellerPost).availableWeight} KG</p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-600">Price:</p>
-                          <p className="font-semibold">{(post as TravellerPost).pricePerKg}$/KG</p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-600">Item Preference:</p>
-                          <p className="font-semibold">None</p>
-                        </div>
-                      </div>
-
-                      {/* Notes */}
-                      {(post as TravellerPost).specialNotes && (
-                        <div>
-                          <p className="text-sm font-medium text-gray-600">Note:</p>
-                          <p className="text-sm">{(post as TravellerPost).specialNotes}</p>
-                        </div>
-                      )}
-
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Delivery:</p>
-                        <p className="text-sm">No</p>
-                      </div>
-                    </div>
-                  ) : (
-                    // Sender Post Card
-                    <div className="space-y-4">
-                      <div className="flex space-x-4">
-                        {/* Item Image */}
-                        <div className="w-24 h-24 bg-gradient-to-br from-pink-200 to-purple-300 rounded-lg flex items-center justify-center">
-                          <Package className="w-8 h-8 text-gray-600" />
-                        </div>
-
-                        {/* Item Details */}
-                        <div className="flex-1">
-                          <div className="mb-2">
-                            <p className="text-sm font-medium text-gray-600">Description:</p>
-                            <p className="font-semibold">{(post as SenderPost).itemDescription}</p>
-                          </div>
-                          
-                          <div className="mb-2">
-                            <p className="text-sm font-medium text-gray-600">Weight:</p>
-                            <p className="font-semibold">{(post as SenderPost).weight} KG</p>
-                          </div>
-
-                          {(post as SenderPost).specialNotes && (
-                            <div className="mb-2">
-                              <p className="text-sm font-medium text-gray-600">Note:</p>
-                              <p className="text-sm">{(post as SenderPost).specialNotes}</p>
-                            </div>
-                          )}
-
-                          <div>
-                            <p className="text-sm font-medium text-gray-600">Delivery:</p>
-                            <p className="text-sm">{(post as SenderPost).deliveryNotes || 'I deliver it myself'}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* User Info */}
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                    <div className="flex items-center space-x-3">
-                      <div className="relative">
-                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                          {post.user.image ? (
-                            <Image
-                              src={post.user.image}
-                              alt={`${post.user.name} avatar`}
-                              width={40}
-                              height={40}
-                              className="rounded-full"
-                            />
-                          ) : (
-                            <User className="w-5 h-5 text-gray-600" />
-                          )}
-                        </div>
-                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs">✓</span>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">
-                          {post.user.name} {post.user.lastName}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-4 h-4 ${
-                            post.user.rating && star <= post.user.rating
-                              ? 'text-yellow-400 fill-current'
-                              : 'text-gray-300'
-                          }`}
-                        />
-                      ))}
-                    </div>
+            {activeTab === 'travellers' && (
+              <>
+                {travellerPosts.length > 0 ? (
+                  travellerPosts.map(renderTravellerCard)
+                ) : (
+                  <div className="text-center py-12">
+                    <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">No traveller posts available</p>
                   </div>
-                </div>
-              </div>
-            ))}
+                )}
+              </>
+            )}
+
+            {activeTab === 'luggage' && (
+              <>
+                {senderPosts.length > 0 ? (
+                  senderPosts.map(renderSenderCard)
+                ) : (
+                  <div className="text-center py-12">
+                    <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">No luggage requests available</p>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
       </main>
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="max-w-md mx-auto px-4">
           <div className="flex items-center justify-around py-2">
             <button className="p-3 rounded-lg">
               <Settings className="w-6 h-6 text-gray-600" />
@@ -467,12 +495,12 @@ export default function Home() {
             <button className="p-3 rounded-lg bg-blue-100">
               <HomeIcon className="w-6 h-6 text-blue-600" />
             </button>
-            <button onClick={handleCreatePostClick} className="p-3 rounded-lg">
+            <Link href={session ? "/posts/new" : "/auth/login"} className="p-3 rounded-lg">
               <Plus className="w-6 h-6 text-gray-600" />
-            </button>
-            <button onClick={handleMessagesClick} className="p-3 rounded-lg">
+            </Link>
+            <Link href={session ? "/messages" : "/auth/login"} className="p-3 rounded-lg">
               <MessageCircle className="w-6 h-6 text-gray-600" />
-            </button>
+            </Link>
           </div>
         </div>
       </nav>

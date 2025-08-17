@@ -226,7 +226,7 @@ function SenderPostsContent() {
                 </Link>
               )}
               <Link
-                href="/dashboard"
+                href="/"
                 className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
               >
                 <ArrowLeft className="w-4 h-4" />

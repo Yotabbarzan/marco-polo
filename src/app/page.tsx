@@ -16,7 +16,8 @@ import {
   MapPin,
   Package,
   CheckCircle,
-  Menu
+  Menu,
+  X
 } from "lucide-react"
 import { RequestModal } from "@/components/requests/request-modal"
 
@@ -94,9 +95,21 @@ export default function Home() {
     type: 'traveller' | 'sender'
     data: TravellerPost | SenderPost
   } | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   useEffect(() => {
     fetchPosts()
+    
+    // Check for success message in URL
+    const urlParams = new URLSearchParams(window.location.search)
+    const message = urlParams.get('message')
+    if (message) {
+      setSuccessMessage(message)
+      // Clear the URL parameter
+      window.history.replaceState({}, '', window.location.pathname)
+      // Auto-hide the message after 5 seconds
+      setTimeout(() => setSuccessMessage(null), 5000)
+    }
   }, [session])
 
   const fetchPosts = async () => {
@@ -520,6 +533,24 @@ export default function Home() {
 
       {/* Main Content */}
       <main>
+        {/* Success Message */}
+        {successMessage && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mx-4 mt-4 md:mx-auto md:max-w-7xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
+                <span className="text-green-700">{successMessage}</span>
+              </div>
+              <button
+                onClick={() => setSuccessMessage(null)}
+                className="text-green-600 hover:text-green-800"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Desktop Layout */}
         <div className="hidden md:block">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

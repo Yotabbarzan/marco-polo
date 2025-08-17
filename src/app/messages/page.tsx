@@ -175,7 +175,7 @@ export default function MessagesPage() {
       <header className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center space-x-4">
-            <Link href="/dashboard" className="p-2 hover:bg-gray-100 rounded-lg">
+            <Link href="/" className="p-2 hover:bg-gray-100 rounded-lg">
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </Link>
             <div>
@@ -197,13 +197,13 @@ export default function MessagesPage() {
             <MessageCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No conversations yet</h3>
             <p className="text-gray-600 mb-6">
-              Start conversations by creating requests on posts in the dashboard.
+              Start conversations by creating requests on posts on the homepage.
             </p>
             <Link
-              href="/dashboard"
+              href="/"
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              Go to Dashboard
+              Go to Homepage
             </Link>
           </div>
         ) : (

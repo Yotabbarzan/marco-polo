@@ -162,7 +162,7 @@ export default function CreateSenderPost() {
       })
 
       if (response.ok) {
-        router.push("/posts/senders?message=Post created successfully!")
+        router.push("/?message=Post created successfully!")
       } else {
         const data = await response.json()
         setError(data.message || "Failed to create post")
@@ -196,11 +196,11 @@ export default function CreateSenderPost() {
               </div>
             </div>
             <Link
-              href="/dashboard"
+              href="/"
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Back to Dashboard</span>
+              <span>Back to Home</span>
             </Link>
           </div>
         </div>
